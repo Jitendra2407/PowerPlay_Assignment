@@ -78,7 +78,7 @@ npm start
 - **Endpoint**: `DELETE /reservations/:reservationId`
 - **Description**: Cancels a reservation and returns seats to the pool.
 - **Responses**:
-  - `200 OK`: Successful cancellation with message `{"message": "Reservation cancelled"}`.
+  - `204 No Content`: Successful cancellation.
   - `404 Not Found`: Reservation ID not found or already cancelled.
 
 ## 🧠 Optimistic Concurrency Control
