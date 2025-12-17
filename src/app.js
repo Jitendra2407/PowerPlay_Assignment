@@ -14,6 +14,10 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.get('/', (req, res) => {
+  res.json({ message: 'Welcome to TicketBoss API' });
+});
+
 app.use(errorHandler);
 
 module.exports = app;
