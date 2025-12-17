@@ -37,10 +37,12 @@ const createReservation = async (req, res) => {
     const event = await Event.findOne({ eventId });
 
     if (!event) {
+      console.error(`Error: Event ${eventId} not found`);
       return res.status(500).json({ message: 'Event not found' });
     }
 
     if (event.availableSeats < seats) {
+      console.warn(`Conflict: Not enough seats. Requested: ${seats}, Available: ${event.availableSeats}`);
       return res.status(409).json({ message: 'Not enough seats available' });
     }
 
@@ -53,6 +55,7 @@ const createReservation = async (req, res) => {
     );
 
     if (!updatedEvent) {
+      console.warn('Conflict: Concurrency version mismatch during reservation');
       return res.status(409).json({ message: 'Concurrency conflict, please try again' });
     }
 
@@ -64,12 +67,14 @@ const createReservation = async (req, res) => {
       eventId
     });
 
+    console.log(`Reservation created: ${reservation.reservationId} for ${seats} seats (Partner: ${partnerId})`);
     res.status(201).json({
       reservationId: reservation.reservationId,
       seats: reservation.seats,
       status: reservation.status
     });
   } catch (error) {
+    console.error('Create Reservation Error:', error);
     res.status(500).json({ message: 'Server Error', error: error.message });
   }
 };
@@ -81,6 +86,7 @@ const cancelReservation = async (req, res) => {
     const reservation = await Reservation.findOne({ reservationId });
 
     if (!reservation || reservation.status === 'cancelled') {
+        console.warn(`Cancellation failed: Reservation ${reservationId} not found or already cancelled`);
       return res.status(404).json({ message: 'Reservation not found or already cancelled' });
     }
 
@@ -94,8 +100,10 @@ const cancelReservation = async (req, res) => {
       }
     );
 
+    console.log(`Reservation cancelled: ${reservationId}, ${reservation.seats} seats returned`);
     res.status(204).send();
   } catch (error) {
+    console.error('Cancellation Error:', error);
     res.status(500).json({ message: 'Server Error', error: error.message });
   }
 };

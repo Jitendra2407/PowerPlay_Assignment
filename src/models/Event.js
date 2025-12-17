@@ -16,7 +16,8 @@ const eventSchema = new mongoose.Schema({
   },
   availableSeats: {
     type: Number,
-    required: true
+    required: true,
+    min: [0, 'Available seats cannot be negative']
   },
   version: {
     type: Number,

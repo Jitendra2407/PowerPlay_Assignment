@@ -1,6 +1,10 @@
 const errorHandler = (err, req, res, next) => {
   console.error(err.stack);
 
+  if (res.headersSent) {
+    return next(err);
+  }
+
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
 
   res.status(statusCode).json({
