@@ -74,7 +74,34 @@ const createReservation = async (req, res) => {
   }
 };
 
+const cancelReservation = async (req, res) => {
+  const { reservationId } = req.params;
+
+  try {
+    const reservation = await Reservation.findOne({ reservationId });
+
+    if (!reservation || reservation.status === 'cancelled') {
+      return res.status(404).json({ message: 'Reservation not found or already cancelled' });
+    }
+
+    reservation.status = 'cancelled';
+    await reservation.save();
+
+    await Event.findOneAndUpdate(
+      { eventId: reservation.eventId },
+      {
+        $inc: { availableSeats: reservation.seats, version: 1 }
+      }
+    );
+
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
 module.exports = {
   getEventSummary,
-  createReservation
+  createReservation,
+  cancelReservation
 };
