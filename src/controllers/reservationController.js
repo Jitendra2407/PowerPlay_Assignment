@@ -27,6 +27,11 @@ const getEventSummary = async (req, res) => {
   }
 };
 
+const createReservation = async (req, res) => {
+  res.status(200).json({ message: 'Validation passed' });
+};
+
 module.exports = {
-  getEventSummary
+  getEventSummary,
+  createReservation
 };
