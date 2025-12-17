@@ -101,7 +101,7 @@ const cancelReservation = async (req, res) => {
     );
 
     console.log(`Reservation cancelled: ${reservationId}, ${reservation.seats} seats returned`);
-    res.status(204).send();
+    res.status(200).json({ message: 'Reservation cancelled' });
   } catch (error) {
     console.error('Cancellation Error:', error);
     res.status(500).json({ message: 'Server Error', error: error.message });
